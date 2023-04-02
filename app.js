@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import request from "browser-request";
 
 function App() {
   const [articles, setArticles] = useState([]);
@@ -8,13 +8,14 @@ function App() {
     const apiKey = "e476cbd0b7324f68b7972cbda630aab0";
     const apiUrl = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`;
 
-    axios.get(apiUrl)
-      .then(response => {
-        setArticles(response.data.articles);
-      })
-      .catch(error => {
+    request(apiUrl, function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+        const data = JSON.parse(body);
+        setArticles(data.articles);
+      } else {
         console.log(error);
-      });
+      }
+    });
   }, []);
 
   return (
